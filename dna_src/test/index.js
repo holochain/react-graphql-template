@@ -1,7 +1,7 @@
 /// NB: The tryorama config patterns are still not quite stabilized.
 /// See the tryorama README [https://github.com/holochain/tryorama]
 /// for a potentially more accurate example
-
+const uuidv1 = require('uuid/v1')
 const path = require('path')
 
 const { Orchestrator, Config, combine, singleConductor, localOnly, tapeExecutor } = require('@holochain/tryorama')
@@ -11,7 +11,7 @@ process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
-const dnaPath = path.join(__dirname, "../dist/rad_tools_notes_app.dna.json")
+const dnaPath = path.join(__dirname, "../dist/dna_src.dna.json")
 
 const orchestrator = new Orchestrator({
   middleware: combine(
@@ -34,13 +34,13 @@ const orchestrator = new Orchestrator({
 const dna = Config.dna(dnaPath, 'note-test')
 const conductorConfig = Config.gen({myInstanceName: dna})
 
-orchestrator.registerScenario.only("Create a note", async (s, t) => {
+orchestrator.registerScenario("Create a note", async (s, t) => {
 
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title first note", "content":"Content first note"}})
+  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
 
   // Wait for all network activity to settle
   await s.consistency()
@@ -60,7 +60,7 @@ orchestrator.registerScenario("Update a note", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title first note", "content":"Content first note"}})
+  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
   await s.consistency()
   const get_note_result = await alice.call("myInstanceName", "notes", "get_note", {"address": address.Ok})
   let get_note = get_note_result.Ok
@@ -87,7 +87,7 @@ orchestrator.registerScenario("Delete a note", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title first note", "content":"Content first note"}})
+  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
   const deleted_address = await alice.call("myInstanceName", "notes", "remove_note", { "address": address.Ok })
 // Wait for all network activity to settle
   await s.consistency()
@@ -108,10 +108,10 @@ orchestrator.registerScenario("List notes", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title first note", "content":"Content first note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title second note", "content":"Content second note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title third note", "content":"Content third note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"title":"Title fourth note", "content":"Content fourth note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title second note", "content":"Content second note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title third note", "content":"Content third note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title fourth note", "content":"Content fourth note"}})
 // Wait for all network activity to settle
   await s.consistency()
   const result = await bob.call("myInstanceName", "notes", "list_notes", {})
