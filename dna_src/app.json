@@ -1,0 +1,14 @@
+{
+  "name": "Holochain Notes App",
+  "description": "A template app to build RAD Tools",
+  "authors": [
+    {
+      "identifier": "Author Name <author@name.com>",
+      "public_key_source": "",
+      "signature": ""
+    }
+  ],
+  "version": "0.0.1",
+  "dht": {},
+  "properties": null
+}
