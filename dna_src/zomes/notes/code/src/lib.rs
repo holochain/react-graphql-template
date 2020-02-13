@@ -10,7 +10,6 @@ use crate::note::NoteSpec;
 use crate::note::Note;
 pub mod note;
 // see https://developer.holochain.org/api/0.0.42-alpha5/hdk/ for info on using the hdk library
-
 // This is a sample zome that defines an entry type "note::Note" that can be committed to the
 // agent's chain via the exposed function create_my_entry
 
@@ -38,7 +37,7 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn create_note(note_spec: NoteSpec) -> ZomeApiResult<Address> {
+    fn create_note(note_spec: NoteSpec) -> ZomeApiResult<Note> {
         note::handlers::create_note(note_spec)
     }
 
@@ -48,8 +47,8 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn update_note(note: Note, address: Address) -> ZomeApiResult<Address> {
-        note::handlers::update_note(note, address)
+    fn update_note(note: Note) -> ZomeApiResult<Note> {
+        note::handlers::update_note(note)
     }
 
     #[zome_fn("hc_public")]

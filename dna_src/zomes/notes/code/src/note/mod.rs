@@ -1,5 +1,5 @@
-// use uuid::Uuid;
 use holochain_json_derive::DefaultJson; 
+use hdk::holochain_persistence_api::cas::content::Address;
 use serde_derive::{Deserialize, Serialize};
 use hdk::{
     self,
@@ -25,24 +25,60 @@ const NOTE_ANCHOR_TEXT: &str = "my_notes";
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteSpec {
+    created_at: u32,
     title: String,
     content: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Note {
-    uuid: String,
+pub struct NoteEntry {
+    id: String,
+    created_at: u32,
     title: String,
     content: String,
 }
 
-impl Note {
-    pub fn from_spec(spec: &NoteSpec, uuid: &String) -> Note {
-        return Note{
-            uuid: uuid.to_owned(),
+impl NoteEntry {
+    pub fn from_spec(spec: &NoteSpec, id: &String) -> NoteEntry {
+        return NoteEntry{
+            id: id.to_owned(),
+            created_at: spec.created_at.clone(),
             title: spec.title.clone(),
             content: spec.content.clone(),
+        }
+    }
+}
+
+impl NoteEntry {
+    pub fn from_note(spec: &Note) -> NoteEntry {
+        return NoteEntry{
+            id: spec.id.clone(),
+            created_at: spec.created_at.clone(),
+            title: spec.title.clone(),
+            content: spec.content.clone(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Note {
+    id: String,
+    created_at: u32,
+    title: String,
+    content: String,
+    address: Address,
+}
+
+impl Note {
+    pub fn from_entry(note_entry: &NoteEntry, address: &Address) -> Note {
+        return Note{
+            id: note_entry.id.clone(),
+            created_at: note_entry.created_at.clone(),
+            title: note_entry.title.clone(),
+            content: note_entry.content.clone(),
+            address: address.to_owned(),
         }
     }
 }
@@ -55,7 +91,7 @@ pub fn definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<Note>| {
+        validation: | _validation_data: hdk::EntryValidationData<NoteEntry>| {
             Ok(())
         },
         links: [
