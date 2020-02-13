@@ -24,7 +24,7 @@ const NOTE_ANCHOR_TEXT: &str = "my_notes";
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct NoteSpec {
+pub struct NoteInput {
     created_at: u32,
     title: String,
     content: String,
@@ -40,20 +40,9 @@ pub struct NoteEntry {
 }
 
 impl NoteEntry {
-    pub fn from_spec(spec: &NoteSpec, id: &String) -> NoteEntry {
+    pub fn from_input(spec: &NoteInput, id: &String) -> NoteEntry {
         return NoteEntry{
             id: id.to_owned(),
-            created_at: spec.created_at.clone(),
-            title: spec.title.clone(),
-            content: spec.content.clone(),
-        }
-    }
-}
-
-impl NoteEntry {
-    pub fn from_note(spec: &Note) -> NoteEntry {
-        return NoteEntry{
-            id: spec.id.clone(),
             created_at: spec.created_at.clone(),
             title: spec.title.clone(),
             content: spec.content.clone(),

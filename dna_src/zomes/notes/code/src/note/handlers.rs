@@ -7,15 +7,15 @@ use hdk::holochain_persistence_api::cas::content::{
 use hdk::prelude::LinkMatch;
 use holochain_anchors::anchor;
 use std::convert::TryFrom;
-use crate::note::NoteSpec;
+use crate::note::NoteInput;
 use crate::note::NoteEntry;
 use crate::note::Note;
 use crate::note;
 
-pub fn create_note(note_spec: NoteSpec) -> ZomeApiResult<Note> {
-    hdk::debug(format!("create_note: {:?}", note_spec)).ok();
-    let id: Address = note_spec.created_at.to_string().into();
-    let note_entry = note::NoteEntry::from_spec(&note_spec, &id.to_string());
+pub fn create_note(note_input: NoteInput) -> ZomeApiResult<Note> {
+    hdk::debug(format!("create_note: {:?}", note_input)).ok();
+    let id: Address = note_input.created_at.to_string().into();
+    let note_entry = note::NoteEntry::from_input(&note_input, &id.to_string());
     let entry = Entry::App(note::NOTE_ENTRY_NAME.into(), note_entry.clone().into());
     let address = hdk::commit_entry(&entry)?;
     hdk::link_entries(&anchor(note::NOTE_ANCHOR_TYPE.to_string(), note::NOTE_ANCHOR_TEXT.to_string())?, &address, note::NOTE_LINK_TYPE, "")?;
@@ -29,10 +29,11 @@ pub fn get_note(address: Address) -> ZomeApiResult<Note> {
     Ok(note)
 }
 
-pub fn update_note(note: Note) -> ZomeApiResult<Note> {
-    let note_entry = note::NoteEntry::from_note(&note);
-    let updated_address = hdk::update_entry(Entry::App(note::NOTE_ENTRY_NAME.into(), note_entry.clone().into()), &note.address)?;
-    let note = note::Note::from_entry(&note_entry, &updated_address);
+pub fn update_note(address: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
+    let note_entry: NoteEntry = hdk::utils::get_as_type(address.clone())?;
+    let update_entry = note::NoteEntry::from_input(&note_input, &note_entry.id.to_string());
+    let updated_address = hdk::update_entry(Entry::App(note::NOTE_ENTRY_NAME.into(), update_entry.clone().into()), &address)?;
+    let note = note::Note::from_entry(&update_entry, &updated_address);
     Ok(note)
 }
 

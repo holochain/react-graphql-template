@@ -6,7 +6,7 @@ use hdk::{
 };
 use hdk::holochain_persistence_api::cas::content::Address;
 use hdk_proc_macros::zome;
-use crate::note::NoteSpec;
+use crate::note::NoteInput;
 use crate::note::Note;
 pub mod note;
 // see https://developer.holochain.org/api/0.0.42-alpha5/hdk/ for info on using the hdk library
@@ -37,8 +37,8 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn create_note(note_spec: NoteSpec) -> ZomeApiResult<Note> {
-        note::handlers::create_note(note_spec)
+    fn create_note(note_input: NoteInput) -> ZomeApiResult<Note> {
+        note::handlers::create_note(note_input)
     }
 
     #[zome_fn("hc_public")]
@@ -47,8 +47,8 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn update_note(note: Note) -> ZomeApiResult<Note> {
-        note::handlers::update_note(note)
+    fn update_note(address: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
+        note::handlers::update_note(address, note_input)
     }
 
     #[zome_fn("hc_public")]
