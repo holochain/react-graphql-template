@@ -1,7 +1,6 @@
 /// NB: The tryorama config patterns are still not quite stabilized.
 /// See the tryorama README [https://github.com/holochain/tryorama]
 /// for a potentially more accurate example
-const uuidv1 = require('uuid/v1')
 const path = require('path')
 
 const { Orchestrator, Config, combine, singleConductor, localOnly, tapeExecutor } = require('@holochain/tryorama')
@@ -40,13 +39,13 @@ orchestrator.registerScenario("Create a note", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
+  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
 
   // Wait for all network activity to settle
   await s.consistency()
   console.log("create_note: address")
-  console.log(address)
-  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": address.Ok})
+  console.log(note_result)
+  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": note_result.Ok.address})
   console.log("get_note: note")
   console.log(result)
   // check for equality of the actual and expected results
@@ -60,20 +59,19 @@ orchestrator.registerScenario("Update a note", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
+  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
   await s.consistency()
-  const get_note_result = await alice.call("myInstanceName", "notes", "get_note", {"address": address.Ok})
-  let get_note = get_note_result.Ok
-  get_note.title = "Updated title first note"
-  get_note.content = "Updated content first note"
-  const updated_address = await alice.call("myInstanceName", "notes", "update_note", {"note" : get_note, "address": address.Ok })
+  let note = note_result.Ok
+  note.title = "Updated title first note"
+  note.content = "Updated content first note"
+  const updated_note_result = await alice.call("myInstanceName", "notes", "update_note", {"note" : note})
 // Wait for all network activity to settle
   await s.consistency()
-  console.log("create_note: address")
-  console.log(address)
-  console.log("update_note: address")
-  console.log(updated_address)
-  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": updated_address.Ok})
+  console.log("create_note: ")
+  console.log(note_result)
+  console.log("update_note: ")
+  console.log(updated_note_result)
+  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": updated_note_result.Ok.address})
   console.log("get_note: note")
   console.log(result)
   // check for equality of the actual and expected results
@@ -81,21 +79,21 @@ orchestrator.registerScenario("Update a note", async (s, t) => {
   t.deepEqual(result.Ok.content, 'Updated content first note')
 })
 
-orchestrator.registerScenario("Delete a note", async (s, t) => {
+orchestrator.registerScenario.only("Delete a note", async (s, t) => {
 
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const address = await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
-  const deleted_address = await alice.call("myInstanceName", "notes", "remove_note", { "address": address.Ok })
+  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
+  const deleted_address = await alice.call("myInstanceName", "notes", "remove_note", { "address": note_result.Ok.address })
 // Wait for all network activity to settle
   await s.consistency()
-  console.log("create_note: address")
-  console.log(address)
+  console.log("create_note: ")
+  console.log(note_result)
   console.log("delete_note: address")
   console.log(deleted_address)
-  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": deleted_address.Ok})
+  const result = await bob.call("myInstanceName", "notes", "get_note", {"address": note_result.Ok.address})
   console.log("get_note: note")
   console.log(result)
   // check for equality of the actual and expected results
@@ -108,10 +106,10 @@ orchestrator.registerScenario("List notes", async (s, t) => {
 
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title second note", "content":"Content second note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title third note", "content":"Content third note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note" : {"uuid": uuidv1(), "timestamp": Math.floor(Date.now() / 1000), "title":"Title fourth note", "content":"Content fourth note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title first note", "content":"Content first note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title second note", "content":"Content second note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title third note", "content":"Content third note"}})
+  await alice.call("myInstanceName", "notes", "create_note", {"note_spec" : {"createdAt": Math.floor(Date.now() / 1000), "title":"Title fourth note", "content":"Content fourth note"}})
 // Wait for all network activity to settle
   await s.consistency()
   const result = await bob.call("myInstanceName", "notes", "list_notes", {})
