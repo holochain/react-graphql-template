@@ -42,20 +42,20 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn get_note(address: Address) -> ZomeApiResult<Note> {
-        note::handlers::get_note(address)
+    fn get_note(anchor: Address) -> ZomeApiResult<Note> {
+        note::handlers::get_note(anchor)
     }
 
     #[zome_fn("hc_public")]
-    fn update_note(address: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
-        note::handlers::update_note(address, note_input)
+    fn update_note(anchor: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
+        note::handlers::update_note(anchor, note_input)
     }
-
-    #[zome_fn("hc_public")]
-    fn remove_note(address: Address) -> ZomeApiResult<Address> {
-        note::handlers::remove_note(address)
-    }
-
+    //
+    // #[zome_fn("hc_public")]
+    // fn remove_note(address: Address) -> ZomeApiResult<Address> {
+    //     note::handlers::remove_note(address)
+    // }
+    //
     #[zome_fn("hc_public")]
     fn list_notes() -> ZomeApiResult<Vec<Note>> {
         note::handlers::list_notes()
