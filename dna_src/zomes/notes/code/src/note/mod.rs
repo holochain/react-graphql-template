@@ -9,6 +9,7 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing,
+        time::Iso8601
     },
     holochain_json_api::{
         json::JsonString,
@@ -25,12 +26,20 @@ const NOTES_ANCHOR_TYPE: &str = "notes";
 const NOTES_ANCHOR_TEXT: &str = "notes";
 
 
+#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct NoteAnchorText {
+    title: String,
+    created_at: Iso8601,
+}
+
 /// Used for GraphQL to create or revise a note
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteInput {
     title: String,
     content: String,
+    created_at: Option<Iso8601>, //empty on create
 }
 
 /// The entry committed
@@ -55,13 +64,13 @@ impl NoteEntry {
 #[serde(rename_all = "camelCase")]
 pub struct Note {
     anchor: Address,
-    created_at: u32,
+    created_at: Iso8601,
     title: String,
     content: String,
 }
 
 impl Note {
-    pub fn from_result(anchor: &Address, created_at: &u32, title: &String, content: &String) -> Note {
+    pub fn from_result(anchor: &Address, created_at: &Iso8601, title: &String, content: &String) -> Note {
         return Note{
             anchor: anchor.to_owned(),
             created_at: created_at.to_owned(),
