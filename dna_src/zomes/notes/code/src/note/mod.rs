@@ -20,41 +20,17 @@ pub mod handlers;
 pub mod validation;
 const NOTE_ENTRY_NAME: &str = "note";
 const NOTE_LINK_TYPE: &str = "note_revisions";
-const NOTE_ANCHOR_TYPE: &str = "note";
+// const NOTE_ANCHOR_TYPE: &str = "note";
 // const NOTES_LINK_TAG: &str = "notes";
 const NOTES_ANCHOR_TYPE: &str = "notes";
 const NOTES_ANCHOR_TEXT: &str = "notes";
 
-
-#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct NoteAnchorText {
-    title: String,
-    created_at: Iso8601,
-}
-
 /// Used for GraphQL to create or revise a note
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct NoteInput {
+pub struct NoteEntry {
     title: String,
     content: String,
-    created_at: Option<Iso8601>, //empty on create
-}
-
-/// The entry committed
-#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct NoteEntry {
-    content: String,
-}
-
-impl NoteEntry {
-    pub fn from_input(note_input: &NoteInput) -> NoteEntry {
-        return NoteEntry{
-            content: note_input.content.clone(),
-        }
-    }
 }
 
 /// Aggregate note used in the UI
@@ -63,16 +39,16 @@ impl NoteEntry {
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Note {
-    anchor: Address,
+    id: Address,
     created_at: Iso8601,
     title: String,
     content: String,
 }
 
 impl Note {
-    pub fn from_result(anchor: &Address, created_at: &Iso8601, title: &String, content: &String) -> Note {
+    pub fn from_result(id: &Address, created_at: &Iso8601, title: &String, content: &String) -> Note {
         return Note{
-            anchor: anchor.to_owned(),
+            id: id.to_owned(),
             created_at: created_at.to_owned(),
             title: title.to_owned(),
             content: content.to_owned(),
