@@ -44,19 +44,6 @@ fn timestamp(entry_result: GetEntryResult) -> Iso8601 {
     }
 }
 
-// fn address(entry_result: GetEntryResult) -> Address {
-//     match entry_result.result {
-//         Single(entry) => {
-//             hdk::debug(format!("single_entry_address: {:?}", entry.headers[0].timestamp())).ok();
-//             entry.headers[0].entry_address().clone()
-//         },
-//         _ => {
-//             hdk::debug(format!("not_single_entry")).ok();
-//             Address::new()
-//         }
-//     }
-// }
-
 pub fn create_note(note_entry: NoteEntry) -> ZomeApiResult<Note> {
     hdk::debug(format!("create_note: {:?}", note_entry)).ok();
     let entry = Entry::App(note::NOTE_ENTRY_NAME.into(), note_entry.clone().into());
@@ -74,12 +61,15 @@ pub fn get_note(id: Address) -> ZomeApiResult<Note> {
     Ok(note)
 }
 
-// pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
-//     let entry = hdk::get_entry(&id.clone())?;
-//     hdk::debug(format!("update_note_entry: {:?}", entry)).ok();
-//     hdk::update_entry(Entry::App(note::NOTE_ENTRY_NAME.into(), note_input.clone().into()), entry.address())?;
-//     get_note(id)
-// }
+pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
+    // let entry = hdk::get_entry(&id.clone())?;
+    let address = match hdk::get_entry(&id.clone())? {
+        None => id.clone(),
+        Some(entry) => entry.address()
+    };
+    hdk::update_entry(Entry::App(note::NOTE_ENTRY_NAME.into(), note_input.clone().into()), &address)?;
+    get_note(id.clone())
+}
 
 pub fn remove_note(id: Address) -> ZomeApiResult<Address> {
     hdk::remove_link(&notes_anchor()?, &id, note::NOTE_LINK_TYPE, "")?;
