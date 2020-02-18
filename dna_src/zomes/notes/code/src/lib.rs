@@ -1,10 +1,13 @@
 #![feature(proc_macro_hygiene)]
 use serde_derive::{Deserialize, Serialize};
+use hdk::holochain_core_types::{
+    time::Iso8601
+};
 use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
 };
-use hdk::holochain_persistence_api::cas::content::Address;
+// use hdk::holochain_persistence_api::cas::content::Address;
 use hdk_proc_macros::zome;
 use crate::note::NoteInput;
 use crate::note::Note;
@@ -42,20 +45,20 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn get_note(address: Address) -> ZomeApiResult<Note> {
-        note::handlers::get_note(address)
+    fn get_note(title: String, created_at:Iso8601) -> ZomeApiResult<Note> {
+        note::handlers::get_note(title, created_at)
     }
-
-    #[zome_fn("hc_public")]
-    fn update_note(address: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
-        note::handlers::update_note(address, note_input)
-    }
-
-    #[zome_fn("hc_public")]
-    fn remove_note(address: Address) -> ZomeApiResult<Address> {
-        note::handlers::remove_note(address)
-    }
-
+    //
+    // #[zome_fn("hc_public")]
+    // fn update_note(anchor: Address, note_input: NoteInput) -> ZomeApiResult<Note> {
+    //     note::handlers::update_note(anchor, note_input)
+    // }
+    //
+    // #[zome_fn("hc_public")]
+    // fn remove_note(anchor: Address) -> ZomeApiResult<Address> {
+    //     note::handlers::remove_note(anchor)
+    // }
+    //
     #[zome_fn("hc_public")]
     fn list_notes() -> ZomeApiResult<Vec<Note>> {
         note::handlers::list_notes()

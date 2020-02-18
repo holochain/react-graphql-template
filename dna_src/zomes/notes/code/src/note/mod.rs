@@ -9,6 +9,7 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing,
+        time::Iso8601
     },
     holochain_json_api::{
         json::JsonString,
@@ -16,58 +17,65 @@ use hdk::{
     },
 };
 pub mod handlers;
-
-const NOTE_LINK_TYPE: &str = "note_link_to";
+pub mod validation;
 const NOTE_ENTRY_NAME: &str = "note";
-const NOTE_ANCHOR_TYPE: &str = "notes";
-const NOTE_ANCHOR_TEXT: &str = "my_notes";
+const NOTE_LINK_TYPE: &str = "note_revisions";
+const NOTE_ANCHOR_TYPE: &str = "note";
+// const NOTES_LINK_TAG: &str = "notes";
+const NOTES_ANCHOR_TYPE: &str = "notes";
+const NOTES_ANCHOR_TEXT: &str = "notes";
 
+
+#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct NoteAnchorText {
+    title: String,
+    created_at: Iso8601,
+}
+
+/// Used for GraphQL to create or revise a note
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteInput {
-    created_at: u32,
     title: String,
     content: String,
+    created_at: Option<Iso8601>, //empty on create
 }
 
+/// The entry committed
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteEntry {
-    id: String,
-    created_at: u32,
-    title: String,
     content: String,
 }
 
 impl NoteEntry {
-    pub fn from_input(spec: &NoteInput, id: &String) -> NoteEntry {
+    pub fn from_input(note_input: &NoteInput) -> NoteEntry {
         return NoteEntry{
-            id: id.to_owned(),
-            created_at: spec.created_at.clone(),
-            title: spec.title.clone(),
-            content: spec.content.clone(),
+            content: note_input.content.clone(),
         }
     }
 }
 
+/// Aggregate note used in the UI
+/// anchor is the stable identifier for GraphQL caching
+/// timestamps come from headers
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Note {
-    id: String,
-    created_at: u32,
+    anchor: Address,
+    created_at: Iso8601,
     title: String,
     content: String,
-    address: Address,
 }
 
 impl Note {
-    pub fn from_entry(note_entry: &NoteEntry, address: &Address) -> Note {
+    pub fn from_result(anchor: &Address, created_at: &Iso8601, title: &String, content: &String) -> Note {
         return Note{
-            id: note_entry.id.clone(),
-            created_at: note_entry.created_at.clone(),
-            title: note_entry.title.clone(),
-            content: note_entry.content.clone(),
-            address: address.to_owned(),
+            anchor: anchor.to_owned(),
+            created_at: created_at.to_owned(),
+            title: title.to_owned(),
+            content: content.to_owned(),
         }
     }
 }
@@ -80,8 +88,22 @@ pub fn definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<NoteEntry>| {
-            Ok(())
+        validation: | validation_data: hdk::EntryValidationData<NoteEntry>| {
+            match validation_data
+            {
+                hdk::EntryValidationData::Create{entry: _,validation_data: _} =>
+                {
+                    Ok(())
+                },
+                hdk::EntryValidationData::Modify{new_entry: _, old_entry: _, old_entry_header:_, validation_data: _} =>
+                {
+                   Ok(())
+                },
+                hdk::EntryValidationData::Delete{old_entry: _, old_entry_header: _, validation_data: _} =>
+                {
+                   Ok(())
+                }
+            }
         },
         links: [
             from!(
