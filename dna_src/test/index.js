@@ -55,7 +55,7 @@ orchestrator.registerScenario("Create a note", async (s, t) => {
   // lauch UIs
 })
 
-orchestrator.registerScenario.only("Update a note", async (s, t) => {
+orchestrator.registerScenario("Update a note", async (s, t) => {
 
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
 
@@ -72,7 +72,7 @@ orchestrator.registerScenario.only("Update a note", async (s, t) => {
 
   console.log("update_note: ")
   console.log(updated_note_result)
-  const result = await bob.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
+  const result = await alice.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
   console.log("get_note: note")
   console.log(result)
   // check for equality of the actual and expected results
@@ -85,12 +85,30 @@ orchestrator.registerScenario.only("Update a note", async (s, t) => {
 
   console.log("update_note: ")
   console.log(updated2_note_result)
-  const result2 = await bob.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
+  const result2 = await alice.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
   console.log("get_note: note")
   console.log(result2)
   // check for equality of the actual and expected results
   t.deepEqual(result2.Ok.title, 'Updated again title first note')
   t.deepEqual(result2.Ok.content, 'Updated again content first note')
+})
+
+orchestrator.registerScenario.only("Bob cant update Alice note", async (s, t) => {
+
+  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
+
+  // Make a call to a Zome function
+  // indicating the function, and passing it an input
+  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
+  await s.consistency()
+  let note = note_result.Ok
+  console.log("create_note: ")
+  console.log(note_result)
+  const updated_note_result = await bob.call("myInstanceName", "notes", "update_note", {"id": note.id, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
+// Wait for all network activity to settle
+  await s.consistency()
+  t.deepEqual(updated_note_result.Ok.title, 'Title first note')
+  t.deepEqual(updated_note_result.Ok.content, 'Content first note')
 })
 
 orchestrator.registerScenario("Remove a note", async (s, t) => {
