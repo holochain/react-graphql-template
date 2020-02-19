@@ -76,6 +76,7 @@ orchestrator.registerScenario("Update a note", async (s, t) => {
   console.log("get_note: note")
   console.log(result)
   // check for equality of the actual and expected results
+  t.deepEqual(result.Ok.id, note_result.Ok.id)
   t.deepEqual(result.Ok.title, 'Updated title first note')
   t.deepEqual(result.Ok.content, 'Updated content first note')
 
@@ -89,11 +90,12 @@ orchestrator.registerScenario("Update a note", async (s, t) => {
   console.log("get_note: note")
   console.log(result2)
   // check for equality of the actual and expected results
+  t.deepEqual(result.Ok.id, result2.Ok.id)
   t.deepEqual(result2.Ok.title, 'Updated again title first note')
   t.deepEqual(result2.Ok.content, 'Updated again content first note')
 })
 
-orchestrator.registerScenario.only("Bob cant update Alice note", async (s, t) => {
+orchestrator.registerScenario("Bob cant update Alice note", async (s, t) => {
 
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
 
