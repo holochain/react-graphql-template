@@ -1,0 +1,1 @@
+{"Dna":{"name":"","description":"","version":"","uuid":"00000000-0000-0000-0000-000000000000","dna_spec_version":"","properties":{},"zomes":{}}}
