@@ -1,6 +1,5 @@
-use holochain_json_derive::DefaultJson; 
-use hdk::holochain_persistence_api::cas::content::Address;
 use serde_derive::{Deserialize, Serialize};
+use holochain_json_derive::DefaultJson; 
 use hdk::{
     self,
     entry,
@@ -15,16 +14,17 @@ use hdk::{
         json::JsonString,
         error::JsonError,
     },
-    api::AGENT_ADDRESS
+    holochain_persistence_api::cas::content::Address
 };
+
 pub mod handlers;
 pub mod validation;
+
 const NOTE_ENTRY_NAME: &str = "note";
-const NOTE_LINK_TYPE: &str = "note_revisions";
+const NOTE_LINK_TYPE: &str = "note_link";
 const NOTES_ANCHOR_TYPE: &str = "notes";
 const NOTES_ANCHOR_TEXT: &str = "notes";
 
-/// Used for GraphQL to create or revise a note
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteEntry {
@@ -32,9 +32,6 @@ pub struct NoteEntry {
     content: String,
 }
 
-/// Aggregate note used in the UI
-/// anchor is the stable identifier for GraphQL caching
-/// timestamps come from headers
 #[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Note {
@@ -66,27 +63,17 @@ pub fn definition() -> ValidatingEntryType {
         validation: | validation_data: hdk::EntryValidationData<NoteEntry>| {
             match validation_data
             {
-                hdk::EntryValidationData::Create{entry: _,validation_data: _} =>
+                hdk::EntryValidationData::Create{entry, validation_data} =>
                 {
-                    Ok(())
+                    validation::validate_entry_create(entry, validation_data)
                 },
-                hdk::EntryValidationData::Modify{new_entry: _, old_entry: _, old_entry_header:_, validation_data} =>
+                hdk::EntryValidationData::Modify{new_entry, old_entry, old_entry_header, validation_data} =>
                 {
-                    let source = &validation_data.package.chain_header.provenances()[0].0;
-                    hdk::debug(format!("validation source: {:?}", source.to_string())).ok();
-
-                    hdk::debug(format!("validation agent: {:?}", AGENT_ADDRESS.to_string())).ok();
-
-                    if AGENT_ADDRESS.to_string() == source.to_string() {
-                      hdk::debug("Succesfully Validated this agent authored the note").ok();
-                      Ok(())
-                    }
-                    else{
-                      Err("Agent who did not author is trying to update".to_string())
-                    }                },
-                hdk::EntryValidationData::Delete{old_entry: _, old_entry_header: _, validation_data: _} =>
+                    validation::validate_entry_modify(new_entry, old_entry, old_entry_header, validation_data)
+                },
+                hdk::EntryValidationData::Delete{old_entry, old_entry_header, validation_data} =>
                 {
-                   Ok(())
+                   validation::validate_entry_delete(old_entry, old_entry_header, validation_data)
                 }
             }
         },
@@ -97,9 +84,18 @@ pub fn definition() -> ValidatingEntryType {
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
-                    Ok(())
+                validation: |validation_data: hdk::LinkValidationData| {
+                    match validation_data
+                    {
+                        hdk::LinkValidationData::LinkAdd{link, validation_data} =>
+                        {
+                            validation::validate_link_add(link, validation_data)
+                        },
+                        hdk::LinkValidationData::LinkRemove{link, validation_data} =>
+                        {
+                            validation::validate_link_remove(link, validation_data)
+                        }
+                    }
                 }
             )
         ]

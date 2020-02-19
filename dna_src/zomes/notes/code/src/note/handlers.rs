@@ -1,29 +1,34 @@
-// use std::convert::TryFrom;
-// use serde_json::json;
-use hdk::error::ZomeApiResult;
-// use hdk::error::ZomeApiError;
-use hdk::holochain_core_types::{
-    entry::Entry,
-    time::Timeout,
-    time::Iso8601
+use hdk::{
+    error::ZomeApiResult,
+    holochain_core_types::{
+        entry::Entry,
+        time::Timeout,
+        time::Iso8601
+    },
+    holochain_persistence_api::cas::content::{
+        Address,
+        AddressableContent
+    },
+    prelude::{
+        LinkMatch,
+        GetEntryOptions,
+        GetEntryResult,
+        GetEntryResultType::Single,
+        StatusRequestKind
+    }
 };
-use hdk::holochain_persistence_api::cas::content::{
-    Address,
-    AddressableContent
-};
-use hdk::prelude::LinkMatch;
-use hdk::prelude::GetEntryOptions;
-use hdk::prelude::GetEntryResult;
-use hdk::prelude::GetEntryResultType::Single;
-use hdk::prelude::StatusRequestKind;
 use holochain_anchors::anchor;
-// use crate::note::NoteAnchorText;
-use crate::note::NoteEntry;
-use crate::note::Note;
-use crate::note;
+use crate::note::{
+    NoteEntry,
+    Note,
+    NOTE_ENTRY_NAME,
+    NOTES_ANCHOR_TYPE,
+    NOTES_ANCHOR_TEXT,
+    NOTE_LINK_TYPE
+};
 
 fn notes_anchor() -> ZomeApiResult<Address> {
-    anchor(note::NOTES_ANCHOR_TYPE.to_string(), note::NOTES_ANCHOR_TEXT.to_string())
+    anchor(NOTES_ANCHOR_TYPE.to_string(), NOTES_ANCHOR_TEXT.to_string())
 }
 
 fn get_initial_entry(address: Address) -> ZomeApiResult<GetEntryResult> {
@@ -46,18 +51,18 @@ fn timestamp(entry_result: GetEntryResult) -> Iso8601 {
 
 pub fn create_note(note_entry: NoteEntry) -> ZomeApiResult<Note> {
     hdk::debug(format!("create_note: {:?}", note_entry)).ok();
-    let entry = Entry::App(note::NOTE_ENTRY_NAME.into(), note_entry.clone().into());
+    let entry = Entry::App(NOTE_ENTRY_NAME.into(), note_entry.clone().into());
     let address = hdk::commit_entry(&entry)?;
     let entry_result = get_initial_entry(address.clone())?;
-    hdk::link_entries(&notes_anchor()?, &address, note::NOTE_LINK_TYPE, "")?;
-    let note = note::Note::from_result(&address, &timestamp(entry_result), &note_entry.title, &note_entry.content);
+    hdk::link_entries(&notes_anchor()?, &address, NOTE_LINK_TYPE, "")?;
+    let note = Note::from_result(&address, &timestamp(entry_result), &note_entry.title, &note_entry.content);
     Ok(note)
 }
 
 pub fn get_note(id: Address) -> ZomeApiResult<Note> {
     let entry_result = get_initial_entry(id.clone())?;
     let note: NoteEntry = hdk::utils::get_as_type(id.clone())?;
-    let note = note::Note::from_result(&id, &timestamp(entry_result), &note.title, &note.content);
+    let note = Note::from_result(&id, &timestamp(entry_result), &note.title, &note.content);
     Ok(note)
 }
 
@@ -66,17 +71,17 @@ pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
         None => id.clone(),
         Some(entry) => entry.address()
     };
-    hdk::update_entry(Entry::App(note::NOTE_ENTRY_NAME.into(), note_input.clone().into()), &address)?;
+    hdk::update_entry(Entry::App(NOTE_ENTRY_NAME.into(), note_input.clone().into()), &address)?;
     get_note(id.clone())
 }
 
 pub fn remove_note(id: Address) -> ZomeApiResult<Address> {
-    hdk::remove_link(&notes_anchor()?, &id, note::NOTE_LINK_TYPE, "")?;
+    hdk::remove_link(&notes_anchor()?, &id, NOTE_LINK_TYPE, "")?;
     hdk::remove_entry(&id)
 }
 
 pub fn list_notes() -> ZomeApiResult<Vec<Note>> {
-    hdk::get_links_and_load(&notes_anchor()?, LinkMatch::Exactly(note::NOTE_LINK_TYPE), LinkMatch::Any)
+    hdk::get_links_and_load(&notes_anchor()?, LinkMatch::Exactly(NOTE_LINK_TYPE), LinkMatch::Any)
         .map(|note_list|{
             note_list.into_iter()
                 .filter_map(Result::ok)
