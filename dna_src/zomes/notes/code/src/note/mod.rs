@@ -15,13 +15,12 @@ use hdk::{
         json::JsonString,
         error::JsonError,
     },
+    api::AGENT_ADDRESS
 };
 pub mod handlers;
 pub mod validation;
 const NOTE_ENTRY_NAME: &str = "note";
 const NOTE_LINK_TYPE: &str = "note_revisions";
-// const NOTE_ANCHOR_TYPE: &str = "note";
-// const NOTES_LINK_TAG: &str = "notes";
 const NOTES_ANCHOR_TYPE: &str = "notes";
 const NOTES_ANCHOR_TEXT: &str = "notes";
 
@@ -71,10 +70,20 @@ pub fn definition() -> ValidatingEntryType {
                 {
                     Ok(())
                 },
-                hdk::EntryValidationData::Modify{new_entry: _, old_entry: _, old_entry_header:_, validation_data: _} =>
+                hdk::EntryValidationData::Modify{new_entry: _, old_entry: _, old_entry_header:_, validation_data} =>
                 {
-                   Ok(())
-                },
+                    let source = &validation_data.package.chain_header.provenances()[0].0;
+                    hdk::debug(format!("validation source: {:?}", source.to_string())).ok();
+
+                    hdk::debug(format!("validation agent: {:?}", AGENT_ADDRESS.to_string())).ok();
+
+                    if AGENT_ADDRESS.to_string() == source.to_string() {
+                      hdk::debug("Succesfully Validated this agent authored the note").ok();
+                      Ok(())
+                    }
+                    else{
+                      Err("Agent who did not author is trying to update".to_string())
+                    }                },
                 hdk::EntryValidationData::Delete{old_entry: _, old_entry_header: _, validation_data: _} =>
                 {
                    Ok(())

@@ -62,7 +62,6 @@ pub fn get_note(id: Address) -> ZomeApiResult<Note> {
 }
 
 pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
-    // let entry = hdk::get_entry(&id.clone())?;
     let address = match hdk::get_entry(&id.clone())? {
         None => id.clone(),
         Some(entry) => entry.address()
