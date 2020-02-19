@@ -1,0 +1,47 @@
+.notes-happ {
+  display: flex;
+  padding: 50px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.note-card {
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 0px 20px 20px;
+  margin-bottom: 20px;
+  width: 400px;
+}
+
+.note-content {
+  margin-bottom: 20px;
+}
+
+.note-form {
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 0px 20px 20px;
+  margin-bottom: 20px;
+  width: 400px;
+}
+
+.form-row {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.form-row > label {
+  flex: 1
+}
+
+.form-row > input {
+  flex: 4;
+}
+
+.form-row > textarea {
+  flex: 4;
+}
+
+button {
+  margin-right: 10px;
+}
