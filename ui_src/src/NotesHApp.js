@@ -46,25 +46,25 @@ function NoteRow ({ note, editingNoteId, setEditingNoteId, updateNote, removeNot
       note={note}
       formTitle='Update Note'
       setEditingNoteId={setEditingNoteId}
-      formAction={({ address, noteInput }) => updateNote({ variables: { address, noteInput } })} />
+      formAction={({ id, noteInput }) => updateNote({ variables: { id, noteInput } })} />
   }
 
   return <NoteCard note={note} setEditingNoteId={setEditingNoteId} removeNote={removeNote} />
 }
 
-function NoteCard ({ note: { id, address, title, content }, setEditingNoteId, removeNote }) {
+function NoteCard ({ note: { id, title, content }, setEditingNoteId, removeNote }) {
   return <div className='note-card'>
     <h3>{title}</h3>
     <div className='note-content'>{content}</div>
     <button className='button' onClick={() => setEditingNoteId(id)}>Edit</button>
-    <button onClick={() => removeNote({ variables: { address } })}>Remove</button>
+    <button onClick={() => removeNote({ variables: { id } })}>Remove</button>
   </div>
 }
 
 function NoteForm ({ note = { title: '', content: '' }, formTitle, formAction, setEditingNoteId = () => {} }) {
   const [formState, setFormState] = useState(pick(['title', 'content'], note))
   const { title, content } = formState
-  const { address } = note
+  const { id } = note
 
   const setField = field => ({ target: { value } }) => setFormState(formState => ({
     ...formState,
@@ -80,10 +80,9 @@ function NoteForm ({ note = { title: '', content: '' }, formTitle, formAction, s
 
   const onSubmit = () => {
     formAction({
-      address,
+      id,
       noteInput: {
-        ...formState,
-        createdAt: Date.now().toString()
+        ...formState
       }
     })
     setEditingNoteId(null)

@@ -1,10 +1,9 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  mutation RemoveNote($address: String) {
-    removeNote (address: $address) {
+  mutation RemoveNote($id: String) {
+    removeNote (id: $id) {
       id
-      address
       createdAt
       title
       content

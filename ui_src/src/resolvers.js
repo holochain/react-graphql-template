@@ -1,5 +1,4 @@
 import { createZomeCall } from './holochainClient'
-import { omitBy, isUndefined } from 'lodash/fp'
 
 function dnaToUiNote (noteResult) {
   return {
@@ -8,29 +7,24 @@ function dnaToUiNote (noteResult) {
   }
 }
 
-function uiToDnaNote (noteInput) {
-  return omitBy(isUndefined, {
-    ...noteInput,
-    created_at: noteInput.createdAt
-  })
-}
-
 export const resolvers = {
   Query: {
-    getNote: async (_, { address }) =>
-      dnaToUiNote(await createZomeCall('/notes/notes/get_note')({ address })),
+    getNote: async (_, { id }) =>
+      dnaToUiNote(await createZomeCall('/react-graphql/notes/get_note')({ id })),
 
     listNotes: async () =>
-      (await createZomeCall('/notes/notes/list_notes')()).map(dnaToUiNote)
+      (await createZomeCall('/react-graphql/notes/list_notes')()).map(dnaToUiNote)
   },
 
   Mutation: {
-    createNote: async (_, { noteInput }) => dnaToUiNote(await createZomeCall('/notes/notes/create_note')({ note_input: { ...uiToDnaNote(noteInput) } })),
+    createNote: async (_, { noteInput }) =>
+      dnaToUiNote(await createZomeCall('/react-graphql/notes/create_note')({ note_input: noteInput })),
 
-    updateNote: async (_, { address, noteInput }) => dnaToUiNote(await createZomeCall('/notes/notes/update_note')({ address, note_input: { ...uiToDnaNote(noteInput) } })),
+    updateNote: async (_, { id, noteInput }) =>
+      dnaToUiNote(await createZomeCall('/react-graphql/notes/update_note')({ id, note_input: noteInput })),
 
-    removeNote: async (_, { address }) =>
-      dnaToUiNote(await createZomeCall('/notes/notes/remove_note')({ address }))
+    removeNote: async (_, { id }) =>
+      dnaToUiNote(await createZomeCall('/react-graphql/notes/remove_note')({ id }))
   }
 }
 

@@ -22,10 +22,13 @@
     "react-scripts": "3.3.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm run start:mock",
+    "start:mock": "REACT_APP_MOCK_DNA_CONNECTION='true' react-scripts start",
+    "start:live": "REACT_APP_MOCK_DNA_CONNECTION='false' react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "hc:start": "holochain -c ./conductor-config.toml"
   },
   "eslintConfig": {
     "extends": "react-app"
