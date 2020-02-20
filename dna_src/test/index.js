@@ -27,135 +27,89 @@ const orchestrator = new Orchestrator({
     // Remove this middleware for other "real" network types which can actually
     // send messages across conductors
     singleConductor,
-  ),
+  )
 })
 
 const dna = Config.dna(dnaPath, 'note-test')
-const conductorConfig = Config.gen({myInstanceName: dna})
+const conductorConfig = Config.gen({reactGraphql: dna})
+// const conductorConfig = Config.gen({reactGraphql: dna}, {
+//   network: {
+//     type: 'sim2h',
+//     sim2h_url: 'ws://localhost:9000'
+//   }
+// })
 
-orchestrator.registerScenario("Create a note", async (s, t) => {
-
+orchestrator.registerScenario("create_note", async (s, t) => {
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-
   // Make a call to a Zome function
   // indicating the function, and passing it an input
-  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
-
+  const create_note_result = await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
   // Wait for all network activity to settle
   await s.consistency()
-  console.log("create_note: result")
-  console.log(note_result)
-  const result = await bob.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id, "created_at": note_result.Ok.createdAt})
-  console.log("get_note: note")
-  console.log(result)
-  // check for equality of the actual and expected results
-  t.deepEqual(result.Ok.title, 'Title first note')
-  t.deepEqual(result.Ok.content, 'Content first note')
-
-  // lauch UIs
+  const get_note_result = await bob.call("reactGraphql", "notes", "get_note", {"id": create_note_result.Ok.id})
+  t.deepEqual(create_note_result, get_note_result)
+  t.deepEqual(get_note_result.Ok.title, 'Title first note')
+  t.deepEqual(get_note_result.Ok.content, 'Content first note')
 })
 
-orchestrator.registerScenario("Update a note", async (s, t) => {
-
+orchestrator.registerScenario("update_note", async (s, t) => {
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-
-  // Make a call to a Zome function
-  // indicating the function, and passing it an input
-  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
+  const create_note_result = await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
+  const update_note_result = await alice.call("reactGraphql", "notes", "update_note", {"id": create_note_result.Ok.id, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
   await s.consistency()
-  let note = note_result.Ok
-  console.log("create_note: ")
-  console.log(note_result)
-  const updated_note_result = await alice.call("myInstanceName", "notes", "update_note", {"id": note.id, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
-// Wait for all network activity to settle
+  const get_note_result = await alice.call("reactGraphql", "notes", "get_note", {"id": create_note_result.Ok.id})
+  t.deepEqual(update_note_result, get_note_result)
+  t.deepEqual(get_note_result.Ok.id, create_note_result.Ok.id)
+  t.deepEqual(get_note_result.Ok.title, 'Updated title first note')
+  t.deepEqual(get_note_result.Ok.content, 'Updated content first note')
+
+  const update_note_result_2 = await alice.call("reactGraphql", "notes", "update_note", {"id": create_note_result.Ok.id, "note_input" : {"title":"Updated again title first note", "content":"Updated again content first note"}})
   await s.consistency()
-
-  console.log("update_note: ")
-  console.log(updated_note_result)
-  const result = await alice.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
-  console.log("get_note: note")
-  console.log(result)
-  // check for equality of the actual and expected results
-  t.deepEqual(result.Ok.id, note_result.Ok.id)
-  t.deepEqual(result.Ok.title, 'Updated title first note')
-  t.deepEqual(result.Ok.content, 'Updated content first note')
-
-  const updated2_note_result = await alice.call("myInstanceName", "notes", "update_note", {"id": note.id, "note_input" : {"title":"Updated again title first note", "content":"Updated again content first note"}})
-// Wait for all network activity to settle
-  await s.consistency()
-
-  console.log("update_note: ")
-  console.log(updated2_note_result)
-  const result2 = await alice.call("myInstanceName", "notes", "get_note", {"id": note_result.Ok.id})
-  console.log("get_note: note")
-  console.log(result2)
-  // check for equality of the actual and expected results
-  t.deepEqual(result.Ok.id, result2.Ok.id)
-  t.deepEqual(result2.Ok.title, 'Updated again title first note')
-  t.deepEqual(result2.Ok.content, 'Updated again content first note')
+  const get_note_result_2 = await bob.call("reactGraphql", "notes", "get_note", {"id": create_note_result.Ok.id})
+  t.deepEqual(update_note_result_2, get_note_result_2)
+  t.deepEqual(get_note_result_2.Ok.id, create_note_result.Ok.id)
+  t.deepEqual(get_note_result_2.Ok.title, 'Updated again title first note')
+  t.deepEqual(get_note_result_2.Ok.content, 'Updated again content first note')
 })
 
-orchestrator.registerScenario("Bob cant update Alice note", async (s, t) => {
-
+orchestrator.registerScenario("validate_entry_modify", async (s, t) => {
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-
-  // Make a call to a Zome function
-  // indicating the function, and passing it an input
-  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
+  const create_note_result = await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
   await s.consistency()
-  let note = note_result.Ok
-  console.log("create_note: ")
-  console.log(note_result)
-  const updated_note_result = await bob.call("myInstanceName", "notes", "update_note", {"id": note.id, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
-// Wait for all network activity to settle
+  const updated_note_result = await bob.call("reactGraphql", "notes", "update_note", {"id": create_note_result.Ok.id, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
   await s.consistency()
-  t.deepEqual(updated_note_result.Ok.title, 'Title first note')
-  t.deepEqual(updated_note_result.Ok.content, 'Content first note')
+  let err = JSON.parse(updated_note_result.Err.Internal)
+  t.deepEqual(err.kind, {"ValidationFailed":"Agent who did not author is trying to update"})
 })
 
-orchestrator.registerScenario("Remove a note", async (s, t) => {
-
+orchestrator.registerScenario("remove_note", async (s, t) => {
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-
-  // Make a call to a Zome function
-  // indicating the function, and passing it an input
-  const note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
-// Wait for all network activity to settle
+  const create_note_result = await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
   await s.consistency()
-  console.log("create_note: for delete")
-  console.log(note_result)
-  const result = await bob.call("myInstanceName", "notes", "list_notes", {})
-  console.log("list_notes: notes")
-  console.log(result)
-  // check for equality of the actual and expected results
-  t.deepEqual(result.Ok.length, 1)
-  const deleted_address = await alice.call("myInstanceName", "notes", "remove_note", { "id": note_result.Ok.id })
-  console.log("delete_note: address")
-  console.log(deleted_address)
-  const result1 = await bob.call("myInstanceName", "notes", "list_notes", {})
-  console.log("list_notes: notes")
-  console.log(result1)
-  t.deepEqual(result1.Ok.length, 0)
+  const list_notes_result = await bob.call("reactGraphql", "notes", "list_notes", {})
+  t.deepEqual(list_notes_result.Ok.length, 1)
+  const remove_note_result = await alice.call("reactGraphql", "notes", "remove_note", { "id": create_note_result.Ok.id })
+  const list_notes_result_2 = await bob.call("reactGraphql", "notes", "list_notes", {})
+  t.deepEqual(list_notes_result_2.Ok.length, 0)
 })
 
-orchestrator.registerScenario("List notes", async (s, t) => {
-
+orchestrator.registerScenario("validate_entry_delete", async (s, t) => {
   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-
-  // Make a call to a Zome function
-  // indicating the function, and passing it an input
-  let note_result = await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title second note", "content":"Content second note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title third note", "content":"Content third note"}})
-  await alice.call("myInstanceName", "notes", "create_note", {"note_input" : {"title":"Title fourth note", "content":"Content fourth note"}})
-// Wait for all network activity to settle
+  const create_note_result = await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
   await s.consistency()
-  console.log("create_note: ")
-  console.log(note_result)
-  const result = await bob.call("myInstanceName", "notes", "list_notes", {})
-  console.log("list_notes: notes")
-  console.log(result)
-  // check for equality of the actual and expected results
+  const deleted_result = await bob.call("reactGraphql", "notes", "remove_note", { "id": create_note_result.Ok.id })
+  let err = JSON.parse(deleted_result.Err.Internal)
+  t.deepEqual(err.kind, {"ValidationFailed":"Agent who did not author is trying to delete"})
+})
+
+orchestrator.registerScenario("list_notes", async (s, t) => {
+  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
+  await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
+  await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title second note", "content":"Content second note"}})
+  await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title third note", "content":"Content third note"}})
+  await alice.call("reactGraphql", "notes", "create_note", {"note_input" : {"title":"Title fourth note", "content":"Content fourth note"}})
+  await s.consistency()
+  const result = await alice.call("reactGraphql", "notes", "list_notes", {})
   t.deepEqual(result.Ok.length, 4)
 })
 

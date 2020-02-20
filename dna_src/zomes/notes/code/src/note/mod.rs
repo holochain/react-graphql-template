@@ -8,12 +8,14 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing,
-        time::Iso8601
+        time::Timeout,
+        time::Iso8601,
     },
     holochain_json_api::{
         json::JsonString,
         error::JsonError,
     },
+    prelude::*,
     holochain_persistence_api::cas::content::Address
 };
 
@@ -41,20 +43,33 @@ pub struct Note {
     content: String,
 }
 
-impl Note {
-    pub fn from_result(id: &Address, created_at: &Iso8601, title: &String, content: &String) -> Note {
-        return Note{
-            id: id.to_owned(),
-            created_at: created_at.to_owned(),
-            title: title.to_owned(),
-            content: content.to_owned(),
+fn timestamp(address: Address) -> ZomeApiResult<Iso8601> {
+    let options = GetEntryOptions{status_request: StatusRequestKind::Initial, entry: false, headers: true, timeout: Timeout::new(10000)};
+    let entry_result = hdk::get_entry_result(&address, options)?;
+    match entry_result.result {
+        GetEntryResultType::Single(entry) => {
+            Ok(entry.headers[0].timestamp().clone())
+        },
+        _ => {
+            unreachable!()
         }
+    }
+}
+
+impl Note {
+    pub fn new(id: Address, note_entry: NoteEntry) -> ZomeApiResult<Note> {
+        Ok(Note{
+            id: id.clone(),
+            created_at: timestamp(id)?,
+            title: note_entry.title,
+            content: note_entry.content,
+        })
     }
 }
 
 pub fn definition() -> ValidatingEntryType {
     entry!(
-        name: "note",
+        name: NOTE_ENTRY_NAME,
         description: "this is a same entry defintion",
         sharing: Sharing::Public,
         validation_package: || {
