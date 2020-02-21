@@ -1,0 +1,66 @@
+# NB: You will need to fill in two things to complete your Conductor-config:
+# 1. The Agent Pub Key for each Agent added
+# 2. The DNA Hash for each DNA added
+
+bridges = []
+persistence_dir = ".holochain/holo"
+
+[[agents]]
+id = "hp-admin-agent"
+keystore_file = "keystore/agent-1.key"
+name = "HP Admin"
+public_address = "<AGENT_1_PUB_KEY>"
+
+[[dnas]]
+file = "dna_src/dist/dna_src.dna.json"
+hash = "<DNA_HASH>"
+id = "react-graphql-dna"
+
+[[instances]]
+agent = "hp-admin-agent"
+dna = "react-graphql-dna"
+id = "react-graphql"
+
+[instances.storage]
+path = ".holochain/holo/storage/hp-admin-agent/react-graphql"
+type = "file"
+
+[[interfaces]]
+id = "websocket-interface"
+
+[interfaces.driver]
+port = 3400
+type = "websocket"
+
+[[interfaces.instances]]
+id = "react-graphql"
+
+[[interfaces]]
+admin = true
+id = "http-interface"
+
+[interfaces.driver]
+port = 3300
+type = "http"
+
+[[interfaces.instances]]
+id = "react-graphql"
+
+[logger]
+type = "debug"
+
+[logger.rules]
+
+[[logger.rules.rules]]
+color = "red"
+exclude = false
+pattern = "^err/"
+
+[[logger.rules.rules]]
+color = "white"
+exclude = false
+pattern = "^debug/dna"
+
+[network]
+sim2h_url = "ws://public.sim2h.net:9000"
+type = "sim2h"
