@@ -14,7 +14,7 @@ const tryConnection = () => {
         console.log('starting ui, connect to:' + port)
         startedConductor = true
         const exec = childProcess.exec
-        exec('npm run start:live')
+        exec('yarn start:live')
       }
     }
   )

@@ -12,7 +12,7 @@
     "hc:run": "holochain -c ./1-conductor-config.toml",
     "hc:start": "npm run hc:config && npm run hc:run",
     "ui:connect-to-conductor": "cd ui_src && node connect-to-conductor",
-    "ui:start": "cd ui_src && npm run start:live",
+    "ui:start": "cd ui_src && yarn start:live",
     "start": "nf start"
   },
   "repository": {
