@@ -3,3 +3,4 @@ node_modules/
 target/
 .hc
 .cargo
+.DS_STORE
