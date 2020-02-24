@@ -40,6 +40,6 @@ const conductorConfig = Config.gen({reactGraphql: dna})
 // })
 
 require('./notes')(orchestrator.registerScenario, conductorConfig)
-require('./players')(orchestrator.registerScenario, conductorConfig)
+// require('./players')(orchestrator.registerScenario, conductorConfig)
 
 orchestrator.run()
