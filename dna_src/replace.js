@@ -27,3 +27,4 @@ replace('zomes/'  + zome + 's/code/src/'  + zome + '/validation.rs', templateC, 
 replace('zomes/'  + zome + 's/code/src/'  + zome + '/validation.rs', template, zome)
 replace('zomes/'  + zome + 's/code/src/'  + zome + '/validation.rs', template.toUpperCase(), zome.toUpperCase())
 replace('test/'  + zome + 's/index.js', template, zome)
+replace('test/index.js', "// New tests", "require('./"  + zome + "s')(orchestrator.registerScenario, conductorConfig)/n// New tests")

@@ -10,7 +10,9 @@ type Note {
 }
 
 input NoteInput {
-  title: String
+  "{label: Title, help: Description of what the title is for, ui: <hc-title>, data: {create: Title of new Note, update: Updated title of Note}}"
+  title: String!
+  "{label: Content, help: Something to help the player, ui: <hc-text-area>, data: {create: Content of new Note, update: Updated content of Note}}"
   content: String
 }
 
