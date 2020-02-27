@@ -30,6 +30,7 @@ dist/
 target/
 .hc
 .cargo
+.DS_STORE
 
 conductor-config.toml
 keystore/*

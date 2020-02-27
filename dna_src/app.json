@@ -3,7 +3,7 @@
   "description": "A template app to build RAD Tools",
   "authors": [
     {
-      "identifier": "Author Name <author@name.com>",
+      "identifier": "Philip Beadle <philip.beadle@holo.host>",
       "public_key_source": "",
       "signature": ""
     }

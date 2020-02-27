@@ -26,20 +26,21 @@ const orchestrator = new Orchestrator({
     // for in-memory testing purposes.
     // Remove this middleware for other "real" network types which can actually
     // send messages across conductors
-    singleConductor,
+    // singleConductor,
   )
 })
 
 const dna = Config.dna(dnaPath, 'note-test')
-const conductorConfig = Config.gen({reactGraphql: dna})
-// const conductorConfig = Config.gen({reactGraphql: dna}, {
-//   network: {
-//     type: 'sim2h',
-//     sim2h_url: 'ws://localhost:9000'
-//   }
-// })
+// const conductorConfig = Config.gen({reactGraphql: dna})
+const conductorConfig = Config.gen({notes: dna}, {
+  network: {
+    type: 'sim2h',
+    sim2h_url: 'ws://localhost:9000'
+  }
+})
 
-require('./notes')(orchestrator.registerScenario, conductorConfig)
-// require('./players')(orchestrator.registerScenario, conductorConfig)
+orchestrator.registerScenario("Generate config and key for Alice & Bob", async (s, t) => {
+  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
+})
 
 orchestrator.run()
