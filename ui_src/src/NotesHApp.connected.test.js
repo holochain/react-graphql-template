@@ -6,6 +6,8 @@ import NotesHApp from './NotesHApp'
 import apolloClient from './apolloClient'
 import mockData from './mock-dnas/mockData'
 
+// These tests are more fragile than most as they mock data is mutated in the tests, so be very deliberate about that when adding new tests like this
+
 const mockNoteEntries = mockData.notes.notes.list_notes()
 
 it('lists notes', async () => {
