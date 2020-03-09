@@ -3,21 +3,21 @@
 // See mockCallZome.js
 
 export const noteEntries = {
-  // QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress01: {
-  //   created_at: '1581553349996',
-  //   title: 'First note',
-  //   content: 'This is the earliest note created'
-  // },
-  // QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress02: {
-  //   created_at: '1581553400796',
-  //   title: 'Middle note',
-  //   content: 'Created after First note but before Latest note'
-  // },
-  // QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress03: {
-  //   created_at: '1581553434263',
-  //   title: 'Latest note',
-  //   content: 'The most recently created note'
-  // }
+  QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress01: {
+    created_at: '1581553349996',
+    title: 'First note',
+    content: 'This is the earliest note created'
+  },
+  QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress02: {
+    created_at: '1581553400796',
+    title: 'Middle note',
+    content: 'Created after First note but before Latest note'
+  },
+  QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress03: {
+    created_at: '1581553434263',
+    title: 'Latest note',
+    content: 'The most recently created note'
+  }
 }
 
 const data = {

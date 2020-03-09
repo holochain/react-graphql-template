@@ -1,11 +1,10 @@
 import React from 'react'
-import { fireEvent, act } from '@testing-library/react'
+import { fireEvent, act, within } from '@testing-library/react'
 import { ApolloProvider } from '@apollo/react-hooks'
 import { renderAndWait } from './utils'
 import NotesHApp from './NotesHApp'
 import apolloClient from './apolloClient'
 import mockData from './mock-dnas/mockData'
-import wait from 'waait'
 
 const mockNoteEntries = mockData.notes.notes.list_notes()
 
@@ -16,7 +15,7 @@ it('lists notes', async () => {
 
   const noteCards = getAllByTestId('note-card')
 
-  expect(noteCards.length).toEqual(mockNoteEntries.length)  
+  expect(noteCards.length).toEqual(mockNoteEntries.length)
 })
 
 it('can edit an existing note', async () => {
@@ -40,7 +39,7 @@ it('can edit an existing note', async () => {
 })
 
 it('can create a new note', async () => {
-  const { getByText, getAllByText, getAllByTestId, getByTestId } = await renderAndWait(<ApolloProvider client={apolloClient}>
+  const { getByText, getByTestId } = await renderAndWait(<ApolloProvider client={apolloClient}>
     <NotesHApp />
   </ApolloProvider>)
 
@@ -48,20 +47,39 @@ it('can create a new note', async () => {
   const contentField = getByTestId('content-field')
   const submitButton = getByText('Submit')
 
-  console.log('submitbuttons', getAllByText('Submit').length)
-
   const newTitle = 'the new note title'
   const newContent = 'the new note content'
 
   await act(async () => {
     fireEvent.change(titleField, { target: { value: newTitle } })
     fireEvent.change(contentField, { target: { value: newContent } })
-    fireEvent.click(submitButton)
-    wait(1000)
   })
-
-  console.log('number of notes', getAllByTestId('note-card').length)
+  await act(async () => fireEvent.click(submitButton))
 
   expect(getByText(newTitle)).toBeInTheDocument()
   expect(getByText(newContent)).toBeInTheDocument()
+})
+
+it('can delete note', async () => {
+  const { getByText, getAllByTestId, queryByText } = await renderAndWait(<ApolloProvider client={apolloClient}>
+    <NotesHApp />
+  </ApolloProvider>)
+
+  const firstNoteTitle = mockNoteEntries[0].title
+  var firstRemoveButton
+
+  const noteCards = getAllByTestId('note-card')
+
+  noteCards.forEach(noteCard => {
+    const { getByText, queryByText } = within(noteCard)
+    if (queryByText(firstNoteTitle)) {
+      firstRemoveButton = getByText('Remove')
+    }
+  })
+
+  expect(getByText(firstNoteTitle)).toBeInTheDocument()
+
+  await act(async () => fireEvent.click(firstRemoveButton))
+
+  expect(queryByText(firstNoteTitle)).not.toBeInTheDocument()
 })
