@@ -10,10 +10,13 @@ import resolvers from './resolvers'
 
 const schemaLink = new SchemaLink({ schema: makeExecutableSchema({ typeDefs, resolvers }) })
 
-const link = ApolloLink.from([
-  apolloLogger,
-  schemaLink
-])
+var links = [schemaLink]
+
+if (process.env.NODE_ENV !== 'test') {
+  links = [apolloLogger].concat(links)
+}
+
+const link = ApolloLink.from(links)
 
 const apolloClient = new ApolloClient({
   link,
