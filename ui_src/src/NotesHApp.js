@@ -53,7 +53,7 @@ function NoteRow ({ note, editingNoteId, setEditingNoteId, updateNote, removeNot
 }
 
 function NoteCard ({ note: { id, title, content }, setEditingNoteId, removeNote }) {
-  return <div className='note-card'>
+  return <div className='note-card' data-testid='note-card'>
     <h3>{title}</h3>
     <div className='note-content'>{content}</div>
     <button className='button' onClick={() => setEditingNoteId(id)}>Edit</button>

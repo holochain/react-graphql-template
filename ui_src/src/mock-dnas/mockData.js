@@ -2,7 +2,7 @@
 // leaves can either be an object, or a function which is called with the zome call args.
 // See mockCallZome.js
 
-const noteEntries = {
+export const noteEntries = {
   QmRccTDUM1UcJWuxW3aMjfYkSBFmhBnGtgB7lAddress01: {
     created_at: '1581553349996',
     title: 'First note',
