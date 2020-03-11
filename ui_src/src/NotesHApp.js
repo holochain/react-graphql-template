@@ -98,11 +98,11 @@ function NoteForm ({ note = { title: '', content: '' }, formTitle, formAction, s
     <h3>{formTitle}</h3>
     <div className='form-row'>
       <label htmlFor='title'>Title</label>
-      <input id='title' name='title' value={title} onChange={setField('title')} data-testid='title-field' />
+      <input id='title' name='title' value={title} onChange={setField('title')} />
     </div>
     <div className='form-row'>
       <label htmlFor='content'>Content</label>
-      <textarea id='content' name='content' value={content} onChange={setField('content')} rows='6' data-testid='content-field' />
+      <textarea id='content' name='content' value={content} onChange={setField('content')} rows='6' />
     </div>
     <div>
       <button onClick={onSubmit}>Submit</button>

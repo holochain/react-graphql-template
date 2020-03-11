@@ -41,12 +41,12 @@ it('can edit an existing note', async () => {
 })
 
 it('can create a new note', async () => {
-  const { getByText, getByTestId } = await renderAndWait(<ApolloProvider client={apolloClient}>
+  const { getByText, getByLabelText } = await renderAndWait(<ApolloProvider client={apolloClient}>
     <NotesHApp />
   </ApolloProvider>)
 
-  const titleField = getByTestId('title-field')
-  const contentField = getByTestId('content-field')
+  const titleField = getByLabelText('Title')
+  const contentField = getByLabelText('Content')
   const submitButton = getByText('Submit')
 
   const newTitle = 'the new note title'
