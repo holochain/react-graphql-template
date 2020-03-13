@@ -1,14 +1,23 @@
 # hn-happ-create
 
-The `hn-happ-create` script is a simple dev tool that allows you to get a Holochain development environment up and running as fast as possible.
+The `hn-happ-create` script is a simple dev tool that allows you to get a working Holochain app up and running as fast as possible.
 
-The script creates a simple "notes hApp" that allows you to create, edit, delete and list notes. It includes a DNA backend and a React + GraphQL frontend. It is a minimal working Holochain app.
+The script creates a simple "notes hApp" that allows you to create, edit, delete, and list notes. It includes a DNA backend and a React + GraphQL frontend. It is a minimal working Holochain app.
 
 ## 0 - Install `nix-shell`
 
-Install `nix-shell` on your machine. Here are our instructions on how to do that [nix-shell installation](fixme)
+Install `nix-shell` on your machine, using this one-line command:
+
+```
+curl https://nixos.org/nix/install | sh
+```
+
+(Note: we currently support macOS and Linux only; please see our [development environment setup guide](https://developer.holochain.org/docs/install/) to set up Linux and `nix-shell` on Windows.)
 
 ## 1 - Get holonix
+
+Holonix is a full Holochain development environment built with the [Nix package manager](https://nixos.org/nix/).
+Rather than using the 'blessed' version of holonix available at https://holochain.love, you'll be installing it from the repo itself.
 
 Clone the holonix repo:
 
