@@ -1,51 +1,51 @@
 # hn-happ-create
 
-The `hn-happ-create` script is a simple dev tool that allows you to get a holochain development environment up and running as fast as possible.
+The `hn-happ-create` script is a simple dev tool that allows you to get a Holochain development environment up and running as fast as possible.
 
-The script creates a simple "notes happ" that allows you to create, edit, delete and list notes. It includes a dna backend and a react + graphql frontend. It is a minimal working Holochain app.
+The script creates a simple "notes hApp" that allows you to create, edit, delete and list notes. It includes a DNA backend and a React + GraphQL frontend. It is a minimal working Holochain app.
 
-## 0 - nix-shell
+## 0 - Install `nix-shell`
 
-Install nix-shell on your machine. Here are our instructions on how to do that [nix-shell installation](fixme)
+Install `nix-shell` on your machine. Here are our instructions on how to do that [nix-shell installation](fixme)
 
-## 1 - get holonix
+## 1 - Get holonix
 
 Clone the holonix repo:
 
 `$ git clone https://github.com/holochain/holonix.git`
 
-go into that directory
+Go into the repo's directory:
 
 `$ cd holonix`
 
-checkout the create-happ branch
+Checkout the `create-happ` branch:
 
 `$ git checkout create-happ`
 
-## 2 - run nix-shell
+## 2 - Run `nix-shell`
 
 `$ nix-shell`
 
-This will begin the nix setup. Once it's complete you will be in a nix-shell environment
+This will begin the holonix setup. Once it's complete you will be in a `nix-shell` environment with the Holochain dev tools and the `hn-happ-create` script ready to use.
 
-## 3 - run the happ create command
+## 3 - Run the hApp create command
 
-From within the nix-shell environment, first move out of the holonix directory
+From within the `nix-shell` environment, first move out of the holonix directory:
 
 `$ cd ..`
 
-then run this command:
+Then run this command:
 
 `$ hn-happ-create my-project-name`
 
-This will create a new directory for your project, and start a holochain conductor and the UI server.
+This will create a new directory for your project, and start a Holochain conductor and a UI web server.
 
-The first time the holochain conductor runs there may be some additional compilation so it might take a little while.
+The first time the Holochain conductor runs there may be some additional compilation, so it might take a little while.
 
-Once it's complete, a browser page should open to the default notes happ.
+Once it's complete, a browser page should open to the notes hApp.
 
-If it doesn't, you can browse to localhost:3000 to use the happ.
+If it doesn't, you can browse to localhost:5200 to use the hApp.
 
 ## A very brief tour
 
-The ui code is in `ui_src` and the dna code is in `dna_src`. Happy hacking!
+The UI code is in `ui_src` and the DNA code is in `dna_src`. Happy hacking!
