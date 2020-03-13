@@ -12,19 +12,27 @@ Install `nix-shell` on your machine. Here are our instructions on how to do that
 
 Clone the holonix repo:
 
-`$ git clone https://github.com/holochain/holonix.git`
+```
+$ git clone https://github.com/holochain/holonix.git
+```
 
 Go into the repo's directory:
 
-`$ cd holonix`
+```
+$ cd holonix
+```
 
 Checkout the `create-happ` branch:
 
-`$ git checkout create-happ`
+```
+$ git checkout create-happ
+```
 
 ## 2 - Run `nix-shell`
 
-`$ nix-shell`
+```
+$ nix-shell
+```
 
 This will begin the holonix setup. Once it's complete you will be in a `nix-shell` environment with the Holochain dev tools and the `hn-happ-create` script ready to use.
 
@@ -32,19 +40,21 @@ This will begin the holonix setup. Once it's complete you will be in a `nix-shel
 
 From within the `nix-shell` environment, first move out of the holonix directory:
 
-`$ cd ..`
+```
+$ cd ..
+```
 
 Then run this command:
 
-`$ hn-happ-create my-project-name`
+```
+$ hn-happ-create my-project-name
+```
 
 This will create a new directory for your project, and start a Holochain conductor and a UI web server.
 
 The first time the Holochain conductor runs there may be some additional compilation, so it might take a little while.
 
-Once it's complete, a browser page should open to the notes hApp.
-
-If it doesn't, you can browse to localhost:5200 to use the hApp.
+Once it's complete, a browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
 
 ## A very brief tour
 
