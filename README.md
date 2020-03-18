@@ -65,6 +65,10 @@ The first time the Holochain conductor runs there may be some additional compila
 
 Once it's complete, a browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
 
+The conductor and the UI server run in the foreground, so you can stop them by pressing `Ctrl`+`C`. If you want to restart them, run this command in the project's directory (make sure you're still in the nix shell):
+
+`$ npm start`
+
 ## A very brief tour
 
 The UI code is in `ui_src` and the DNA code is in `dna_src`. Happy hacking!
