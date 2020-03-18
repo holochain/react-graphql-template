@@ -71,4 +71,13 @@ The conductor and the UI server run in the foreground, so you can stop them by p
 
 ## A very brief tour
 
-The UI code is in `ui_src` and the DNA code is in `dna_src`. Happy hacking!
+The UI code is in `ui_src` and the DNA code is in `dna_src`. This notes demo app uses:
+
+1. A Holochain DNA on the back end (of course)
+2. [Apollo GraphQL middleware](https://www.apollographql.com/) in the browser to translate zome calls into something easy for front-end frameworks to understand and manipulate
+3. [React](https://reactjs.org) for UI and data flow
+4. [create-react-app](https://create-react-app.dev/) for development tooling
+
+As with most hApps, much of the business logic lives in the front-end and is delivered as static assets to the browser. The create-react-app dev tooling builds it all from source, gets it ready for the browser, and serves it up using [Webpack's dev server](https://webpack.js.org/configuration/dev-server/). (We're using this instead of Holochain's built-in static asset server because it supports live reloading of changes to the UI code.)
+
+**Happy hacking!**
