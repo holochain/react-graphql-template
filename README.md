@@ -63,10 +63,15 @@ This will create a new directory for your project, and start a Holochain conduct
 
 The first time the Holochain conductor runs there may be some additional compilation, so it might take a little while.
 
-Once it's complete, a browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
+Once it's complete, go into the new project directory and run this command:
 
-The conductor and the UI server run in the foreground, so you can stop them by pressing `Ctrl`+`C`. If you want to restart them, run this command in the project's directory (make sure you're still in the nix shell):
+```
+$ npm start
+```
 
+A browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
+
+The conductor and the UI server run in the foreground, so you can stop them by pressing `Ctrl`+`C`.
 `$ npm start`
 
 ## A very brief tour
