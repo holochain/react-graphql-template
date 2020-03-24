@@ -31,7 +31,7 @@ const orchestrator = new Orchestrator({
 })
 
 const dna = Config.dna(dnaPath, 'note-test')
-const conductorConfig = Config.gen({reactGraphql: dna})
+const conductorConfig = Config.gen({notes: dna})
 // const conductorConfig = Config.gen({reactGraphql: dna}, {
 //   network: {
 //     type: 'sim2h',
