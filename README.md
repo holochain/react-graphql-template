@@ -17,35 +17,15 @@ curl https://nixos.org/nix/install | sh
 ## 1 - Get holonix
 
 Holonix is a full Holochain development environment built with the [Nix package manager](https://nixos.org/nix/).
-Rather than using the 'blessed' version of holonix available at https://holochain.love, you'll be installing it from the repo itself.
-
-Clone the holonix repo:
+Rather than using the 'blessed' version of holonix available at https://holochain.love, you'll be using the develop branch version.
 
 ```
-$ git clone https://github.com/holochain/holonix.git
-```
-
-Go into the repo's directory:
-
-```
-$ cd holonix
-```
-
-Checkout the `create-happ` branch:
-
-```
-$ git checkout create-happ
-```
-
-## 2 - Run `nix-shell`
-
-```
-$ nix-shell
+nix-shell https://github.com/holochain/holonix/archive/develop.tar.gz
 ```
 
 This will begin the holonix setup. Once it's complete you will be in a `nix-shell` environment with the Holochain dev tools and the `hn-happ-create` script ready to use.
 
-## 3 - Run the hApp create command
+## 2 - Run the hApp create command
 
 From within the `nix-shell` environment, first move out of the holonix directory:
 
