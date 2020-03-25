@@ -14,43 +14,27 @@ curl https://nixos.org/nix/install | sh
 
 (Note: we currently support macOS and Linux only; please see our [development environment setup guide](https://developer.holochain.org/docs/install/) to set up Linux and `nix-shell` on Windows.)
 
-## 1 - Get holonix
+## 1 - Get Holonix and enter the development environment
 
 Holonix is a full Holochain development environment built with the [Nix package manager](https://nixos.org/nix/).
-Rather than using the 'blessed' version of holonix available at https://holochain.love, you'll be installing it from the repo itself.
+Rather than using the 'blessed' version of holonix available at https://holochain.love, you'll be installing it from the repo itself. (This tool isn't available in the blessed version yet.)
 
-Clone the holonix repo:
-
-```
-$ git clone https://github.com/holochain/holonix.git
-```
-
-Go into the repo's directory:
+Download Holonix and enter the shell:
 
 ```
-$ cd holonix
+$ nix-shell https://github.com/holochain/holonix/archive/develop.tar.gz
 ```
 
-Checkout the `create-happ` branch:
+This will begin the Holonix setup. Once it's complete you will be in a `nix-shell` environment with the Holochain dev tools and the `hn-happ-create` script ready to use.
+
+## 2 - Run the hApp create command
+
+From within the `nix-shell` environment, first create a directory for all your Holochain projects (if you haven't already). You can create it wherever you like; here's a recommended setup:
 
 ```
-$ git checkout create-happ
-```
-
-## 2 - Run `nix-shell`
-
-```
-$ nix-shell
-```
-
-This will begin the holonix setup. Once it's complete you will be in a `nix-shell` environment with the Holochain dev tools and the `hn-happ-create` script ready to use.
-
-## 3 - Run the hApp create command
-
-From within the `nix-shell` environment, first move out of the holonix directory:
-
-```
-$ cd ..
+$ cd ~
+$ mkdir Holochain
+$ cd Holochain
 ```
 
 Then run this command:
@@ -59,17 +43,17 @@ Then run this command:
 $ hn-happ-create my-project-name
 ```
 
-This will create a new directory for your project, and start a Holochain conductor and a UI web server.
+This will create a new directory for your project, download all the dependencies and development tools, and create the hApp source code. This will take some time.
 
-The first time the Holochain conductor runs there may be some additional compilation, so it might take a little while.
+## 3 - Start your new hApp!
 
 Once it's complete, go into the new project directory and run this command:
 
 ```
-$ npm start
+$ yarn start
 ```
 
-A browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
+The first time the Holochain conductor runs there may be some additional compilation, so it might take a little while. When it's done, a browser page should open to the notes hApp. If it doesn't, you can browse to http://localhost:5200 to use the hApp.
 
 The conductor and the UI server run in the foreground, so you can stop them by pressing `Ctrl`+`C`.
 `$ npm start`
