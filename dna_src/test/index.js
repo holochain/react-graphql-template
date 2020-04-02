@@ -30,9 +30,9 @@ const orchestrator = new Orchestrator({
   )
 })
 
-const dna = Config.dna(dnaPath, 'note-test')
+const dna = Config.dna(dnaPath, 'notes-test')
 const conductorConfig = Config.gen({notes: dna})
-// const conductorConfig = Config.gen({reactGraphql: dna}, {
+// const conductorConfig = Config.gen({notes: dna}, {
 //   network: {
 //     type: 'sim2h',
 //     sim2h_url: 'ws://localhost:9000'
@@ -40,6 +40,5 @@ const conductorConfig = Config.gen({notes: dna})
 // })
 
 require('./notes')(orchestrator.registerScenario, conductorConfig)
-// require('./players')(orchestrator.registerScenario, conductorConfig)
 
 orchestrator.run()

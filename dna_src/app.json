@@ -1,14 +1,9 @@
 {
-  "name": "react-graphql-template",
-  "description": "A template app to build RAD Tools",
-  "authors": [
-    {
-      "identifier": "Philip Beadle <philip.beadle@holo.host>",
-      "public_key_source": "",
-      "signature": ""
-    }
-  ],
+  "name": "Notes",
+  "description": "",
+  "authors": [],
   "version": "0.0.1",
   "dht": {},
-  "properties": null
+  "properties": null,
+  "ui": ""
 }

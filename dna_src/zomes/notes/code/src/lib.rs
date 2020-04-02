@@ -6,12 +6,10 @@ use hdk::{
     error::ZomeApiResult,
     holochain_persistence_api::cas::content::Address
 };
+
 use crate::note::NoteEntry;
 use crate::note::Note;
 pub mod note;
-// see https://developer.holochain.org/api/0.0.42-alpha5/hdk/ for info on using the hdk library
-// This is a sample zome that defines an entry type "note::Note" that can be committed to the
-// agent's chain via the exposed function create_my_entry
 
 #[zome]
 mod notes {
@@ -32,8 +30,13 @@ mod notes {
     }
 
     #[entry_def]
-     fn note_def() -> ValidatingEntryType {
-        note::definition()
+    fn note_id_def() -> ValidatingEntryType {
+       note::id_definition()
+    }
+
+    #[entry_def]
+     fn note_entry_def() -> ValidatingEntryType {
+        note::entry_definition()
     }
 
     #[zome_fn("hc_public")]
@@ -60,4 +63,5 @@ mod notes {
     fn list_notes() -> ZomeApiResult<Vec<Note>> {
         note::handlers::list_notes()
     }
+    
 }
