@@ -1,6 +1,6 @@
-# hn-happ-create
+# hc-happ-create
 
-The `hn-happ-create` script is a simple dev tool that allows you to get a working Holochain app up and running as fast as possible.
+The `hc-happ-create` script is a simple dev tool that allows you to get a working Holochain app up and running as fast as possible.
 
 The script creates a simple "notes hApp" that allows you to create, edit, delete, and list notes. It includes a DNA backend and a React + GraphQL frontend. It is a minimal working Holochain app.
 
@@ -35,7 +35,7 @@ $ cd Holochain
 Then run this command:
 
 ```
-$ hn-happ-create my-project-name
+$ hc-happ-create my-project-name
 ```
 
 This will create a new directory for your project, download all the dependencies and development tools, and create the hApp source code. This will take some time.
