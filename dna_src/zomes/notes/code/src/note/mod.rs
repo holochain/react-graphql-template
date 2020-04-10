@@ -53,6 +53,8 @@ pub struct NoteEntry {
 pub struct Note {
     id: Address,
     created_at: Iso8601,
+    address: Address,
+    updated_at: Iso8601,
 	title: String,
 	content: String,
 }
@@ -79,12 +81,29 @@ impl NoteId {
 }
 
 impl Note {
-    pub fn new(note_id: NoteId, note_entry: NoteEntry) -> ZomeApiResult<Note> {
+    pub fn new(note_id: NoteId, address: Address, note_entry: NoteEntry) -> ZomeApiResult<Note> {
         let note_id_entry = Entry::App(NOTE_ID_ENTRY_NAME.into(), note_id.clone().into());
         hdk::debug(format!("note_id_entry: {:?}",note_id_entry)).ok();
         Ok(Note{
             id: note_id_entry.address(),
             created_at: note_id.initial_entry_created_at,
+            address: address.clone(),
+            updated_at: note_id.initial_entry_created_at,
+			title: note_entry.title,
+			content: note_entry.content,
+        })
+    }
+}
+
+impl Note {
+    pub fn existing(note_id: NoteId, address: Address, note_entry: NoteEntry) -> ZomeApiResult<Note> {
+        let note_id_entry = Entry::App(NOTE_ID_ENTRY_NAME.into(), note_id.clone().into());
+        hdk::debug(format!("note_id_entry: {:?}",note_id_entry)).ok();
+        Ok(Note{
+            id: note_id_entry.address(),
+            created_at: note_id.initial_entry_created_at,
+            address: address.clone(),
+            updated_at: timestamp(address.clone())?,
 			title: note_entry.title,
 			content: note_entry.content,
         })

@@ -50,13 +50,13 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
-        note::handlers::update_note(id, note_input)
+    fn update_note(id: Address, address: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
+        note::handlers::update_note(id, address, note_input)
     }
 
     #[zome_fn("hc_public")]
-    fn remove_note(id: Address) -> ZomeApiResult<Address> {
-        note::handlers::remove_note(id)
+    fn remove_note(id: Address, address: Address) -> ZomeApiResult<Address> {
+        note::handlers::remove_note(id, address)
     }
 
     #[zome_fn("hc_public")]

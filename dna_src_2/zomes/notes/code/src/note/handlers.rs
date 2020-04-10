@@ -15,11 +15,8 @@ use holochain_anchors::anchor;
 use crate::note::{
     NOTES_ANCHOR_TYPE,
     NOTES_ANCHOR_TEXT,
-    // NOTE_ID_LINK_TYPE,
-    // NOTE_ID_ENTRY_NAME,
     NOTE_ENTRY_LINK_TYPE,
     NOTE_ENTRY_NAME,
-    // NoteId,
     NoteEntry,
     Note,
 };
@@ -32,10 +29,6 @@ pub fn create_note(note_entry: NoteEntry) -> ZomeApiResult<Note> {
     let note_anchor = notes_anchor()?;
     let entry = Entry::App(NOTE_ENTRY_NAME.into(), note_entry.clone().into());
     let entry_address = hdk::commit_entry(&entry)?;
-    // let note_id = NoteId::new(entry_address.clone())?;
-    // let note_id_entry = Entry::App(NOTE_ID_ENTRY_NAME.into(), note_id.clone().into());
-    // let note_id_address = hdk::commit_entry(&note_id_entry)?;
-    // hdk::link_entries(&note_id_address, &entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
     let note = Note::new(entry_address.clone(), note_entry)?;
     hdk::link_entries(&note_anchor, &entry_address, NOTE_ENTRY_LINK_TYPE, &note.created_at.to_string())?;
     Ok(note)
@@ -52,18 +45,10 @@ pub fn update_note(id: Address, created_at: Iso8601, address: Address, note_inpu
     Note::existing(id.clone(), created_at, updated_entry_address, note_input)
 }
 
-// pub fn remove_note(id: Address) -> ZomeApiResult<Address> {
-//     if let Some(link) = hdk::get_links(&id, LinkMatch::Exactly(NOTE_ENTRY_LINK_TYPE), LinkMatch::Any)?.links().get(0) {
-//         let entry_address = link.address.clone();
-//         hdk::remove_link(&id, &entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
-//         hdk::remove_link(&notes_anchor()?, &id, NOTE_ID_LINK_TYPE, "")?;
-//         hdk::remove_entry(&entry_address)?;
-//         hdk::remove_entry(&id)
-//     }
-//     else {
-//         Err(hdk::error::ZomeApiError::Internal("No Note at this address".to_string()))
-//     }
-// }
+pub fn remove_note(id: Address, created_at: Iso8601, address: Address) -> ZomeApiResult<Address> {
+    hdk::remove_link(&notes_anchor()?, &id, NOTE_ENTRY_LINK_TYPE, &created_at.to_string())?;
+    hdk::remove_entry(&address)
+}
 
 pub fn list_notes() -> ZomeApiResult<Vec<Note>> {
     hdk::get_links(&notes_anchor()?, LinkMatch::Exactly(NOTE_ENTRY_LINK_TYPE), LinkMatch::Any)?.links()

@@ -10,7 +10,7 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(get_note_result.Ok.content, 'Content first note')
   })
 
-  scenario.only("update_note", async (s, t) => {
+  scenario("update_note", async (s, t) => {
     const {alice} = await s.players({alice: conductorConfig}, true)
     const create_note_result = await alice.call("notes", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
     const update_note_result = await alice.call("notes", "notes", "update_note", {"id": create_note_result.Ok.id, "created_at": create_note_result.Ok.createdAt, "address": create_note_result.Ok.address, "note_input" : {"title":"Updated title first note", "content":"Updated content first note"}})
@@ -36,7 +36,7 @@ module.exports = (scenario, conductorConfig) => {
     await s.consistency()
     const list_notes_result = await alice.call("notes", "notes", "list_notes", {})
     t.deepEqual(list_notes_result.Ok.length, 1)
-    const remove_note_result = await alice.call("notes", "notes", "remove_note", { "id": create_note_result.Ok.id })
+    await alice.call("notes", "notes", "remove_note", { "id": create_note_result.Ok.id, "created_at": create_note_result.Ok.createdAt, "address": create_note_result.Ok.address })
     const list_notes_result_2 = await alice.call("notes", "notes", "list_notes", {})
     t.deepEqual(list_notes_result_2.Ok.length, 0)
   })

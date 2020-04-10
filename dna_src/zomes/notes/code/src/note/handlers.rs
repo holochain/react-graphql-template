@@ -32,47 +32,36 @@ pub fn create_note(note_entry: NoteEntry) -> ZomeApiResult<Note> {
     let note_id = NoteId::new(entry_address.clone())?;
     let note_id_entry = Entry::App(NOTE_ID_ENTRY_NAME.into(), note_id.clone().into());
     let note_id_address = hdk::commit_entry(&note_id_entry)?;
-    hdk::link_entries(&note_id_address, &entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
+    hdk::link_entries(&note_id_address, &entry_address.clone(), NOTE_ENTRY_LINK_TYPE, "")?;
     hdk::link_entries(&note_anchor, &note_id_address, NOTE_ID_LINK_TYPE, "")?;
-    Note::new(note_id, note_entry)
+    Note::new(note_id, entry_address.clone(), note_entry)
 }
 
 pub fn get_note(id: Address) -> ZomeApiResult<Note> {
     let note_id: NoteId = hdk::utils::get_as_type(id.clone())?;
     if let Some(link) = hdk::get_links(&id, LinkMatch::Exactly(NOTE_ENTRY_LINK_TYPE), LinkMatch::Any)?.links().get(0) {
         let note_entry: NoteEntry = hdk::utils::get_as_type(link.address.clone())?;
-        Note::new(note_id, note_entry)
+        let address = Entry::App(NOTE_ENTRY_NAME.into(), note_entry.clone().into()).address();
+        Note::existing(note_id, address, note_entry)
     }
     else {
         Err(hdk::error::ZomeApiError::Internal("No Note at this address".to_string()))
     }
 }
 
-pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
+pub fn update_note(id: Address, address: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
     let note_id: NoteId = hdk::utils::get_as_type(id.clone())?;
-    if let Some(link) = hdk::get_links(&id, LinkMatch::Exactly(NOTE_ENTRY_LINK_TYPE), LinkMatch::Any)?.links().get(0) {
-        let entry_address = link.address.clone();
-        let updated_entry_address = hdk::update_entry(Entry::App(NOTE_ENTRY_NAME.into(), note_input.clone().into()), &entry_address.clone())?;
-        hdk::remove_link(&id, &entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
-        hdk::link_entries(&id, &updated_entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
-        Note::new(note_id, note_input)
-    }
-    else {
-        Err(hdk::error::ZomeApiError::Internal("No Note at this address".to_string()))
-    }
+    let updated_address = hdk::update_entry(Entry::App(NOTE_ENTRY_NAME.into(), note_input.clone().into()), &address.clone())?;
+    hdk::remove_link(&id, &address, NOTE_ENTRY_LINK_TYPE, "")?;
+    hdk::link_entries(&id, &updated_address.clone(), NOTE_ENTRY_LINK_TYPE, "")?;
+    Note::existing(note_id, updated_address.clone(), note_input)
 }
 
-pub fn remove_note(id: Address) -> ZomeApiResult<Address> {
-    if let Some(link) = hdk::get_links(&id, LinkMatch::Exactly(NOTE_ENTRY_LINK_TYPE), LinkMatch::Any)?.links().get(0) {
-        let entry_address = link.address.clone();
-        hdk::remove_link(&id, &entry_address, NOTE_ENTRY_LINK_TYPE, "")?;
-        hdk::remove_link(&notes_anchor()?, &id, NOTE_ID_LINK_TYPE, "")?;
-        hdk::remove_entry(&entry_address)?;
-        hdk::remove_entry(&id)
-    }
-    else {
-        Err(hdk::error::ZomeApiError::Internal("No Note at this address".to_string()))
-    }
+pub fn remove_note(id: Address, address: Address) -> ZomeApiResult<Address> {
+    hdk::remove_link(&id.clone(), &address, NOTE_ENTRY_LINK_TYPE, "")?;
+    hdk::remove_link(&notes_anchor()?, &id.clone(), NOTE_ID_LINK_TYPE, "")?;
+    hdk::remove_entry(&address)?;
+    hdk::remove_entry(&id)
 }
 
 pub fn list_notes() -> ZomeApiResult<Vec<Note>> {

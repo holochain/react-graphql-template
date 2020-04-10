@@ -30,11 +30,6 @@ mod notes {
         holochain_anchors::anchor_definition()
     }
 
-    // #[entry_def]
-    // fn note_id_def() -> ValidatingEntryType {
-    //    note::id_definition()
-    // }
-
     #[entry_def]
      fn note_entry_def() -> ValidatingEntryType {
         note::entry_definition()
@@ -55,10 +50,10 @@ mod notes {
         note::handlers::update_note(id, created_at, address, note_input)
     }
 
-    // #[zome_fn("hc_public")]
-    // fn remove_note(id: Address) -> ZomeApiResult<Address> {
-    //     note::handlers::remove_note(id)
-    // }
+    #[zome_fn("hc_public")]
+    fn remove_note(id: Address, created_at: Iso8601, address: Address) -> ZomeApiResult<Address> {
+        note::handlers::remove_note(id, created_at, address)
+    }
 
     #[zome_fn("hc_public")]
     fn list_notes() -> ZomeApiResult<Vec<Note>> {
