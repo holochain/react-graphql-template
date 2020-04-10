@@ -10,7 +10,7 @@ process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
-const dnaPath = path.join(__dirname, "../dist/dna_src.dna.json")
+const dnaPath = path.join(__dirname, "../dist/dna_src_2.dna.json")
 
 const orchestrator = new Orchestrator({
   middleware: combine(
@@ -26,26 +26,19 @@ const orchestrator = new Orchestrator({
     // for in-memory testing purposes.
     // Remove this middleware for other "real" network types which can actually
     // send messages across conductors
-    // singleConductor,
+    singleConductor,
   )
 })
 
 const dna = Config.dna(dnaPath, 'notes-test')
-// const conductorConfig = Config.gen({notes: dna})
-const conductorConfig = Config.gen({notes: dna}, {
-  network: {
-    type: 'sim2h',
-    sim2h_url: 'ws://localhost:9000'
-  }
-})
+const conductorConfig = Config.gen({notes: dna})
+// const conductorConfig = Config.gen({notes: dna}, {
+//   network: {
+//     type: 'sim2h',
+//     sim2h_url: 'ws://localhost:9000'
+//   }
+// })
 
-orchestrator.registerScenario("Generate config and key for Alice & Bob", async (s, t) => {
-  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
-  await alice.call("notes", "notes", "create_note", {"note_input" : {"title":"Title first note", "content":"Content first note"}})
-  await alice.call("notes", "notes", "create_note", {"note_input" : {"title":"Title second note", "content":"Content second note"}})
-  await alice.call("notes", "notes", "create_note", {"note_input" : {"title":"Title third note", "content":"Content third note"}})
-  await alice.call("notes", "notes", "create_note", {"note_input" : {"title":"Title fourth note", "content":"Content fourth note"}})
-  await s.consistency()
-})
+require('./notes')(orchestrator.registerScenario, conductorConfig)
 
 orchestrator.run()

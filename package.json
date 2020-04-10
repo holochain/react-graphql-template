@@ -6,9 +6,9 @@
   "scripts": {
     "hc:install": "yarn install && cd ui_src && yarn install",
     "hc:keygen": "hc keygen -n --path ./keystores/agent1.keystore",
-    "hc:config": "cd dna_src && hc test --testfile test/config-generate.js | tee conductor-output.txt && node test/config-copy.js",
-    "hc:test": "cd dna_src && hc test",
-    "hc:package": "cd dna_src && hc package",
+    "hc:config": "cd dna_src_2 && hc test --testfile test/config-generate.js | tee conductor-output.txt && node test/config-copy.js",
+    "hc:test": "cd dna_src_2 && hc test",
+    "hc:package": "cd dna_src_2 && hc package",
     "hc:run": "holochain -c ./1-conductor-config.toml",
     "hc:start": "npm run hc:config && npm run hc:run",
     "ui:connect-to-conductor": "cd ui_src && node connect-to-conductor",
