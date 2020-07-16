@@ -12,7 +12,7 @@ hdk = "=0.0.50-alpha4"
 hdk_proc_macros = "=0.0.50-alpha4"
 holochain_wasm_utils = "=0.0.50-alpha4"
 holochain_json_derive = "=0.0.23"
-holochain_anchors = { git = "https://github.com/holochain/holochain-anchors" , branch = "update-0.0.50-alpha4" }
+holochain_anchors = { git = "https://github.com/holochain/holochain-anchors" , tag = "v0.2.6" }
 
 [lib]
 path = "src/lib.rs"
