@@ -1,6 +1,6 @@
 [package]
 name = "notes"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["hc-scaffold-framework"]
 edition = "2018"
 
@@ -8,11 +8,11 @@ edition = "2018"
 serde = "1.0"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 serde_derive = "1.0"
-hdk = "=0.0.49-alpha1"
-hdk_proc_macros = "=0.0.49-alpha1"
-holochain_wasm_utils = "=0.0.49-alpha1"
+hdk = "=0.0.50-alpha4"
+hdk_proc_macros = "=0.0.50-alpha4"
+holochain_wasm_utils = "=0.0.50-alpha4"
 holochain_json_derive = "=0.0.23"
-holochain_anchors = { git = "https://github.com/holochain/holochain-anchors" , branch = "master" }
+holochain_anchors = { git = "https://github.com/holochain/holochain-anchors" , tag = "v0.2.6" }
 
 [lib]
 path = "src/lib.rs"

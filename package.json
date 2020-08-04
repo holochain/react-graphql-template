@@ -1,6 +1,6 @@
 {
   "name": "react-graphql-template",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "A React GraphQL Holochain hApp demonstrating how to use GraphQL with Holochain",
   "main": "index.js",
   "scripts": {
