@@ -1,6 +1,6 @@
 [package]
 name = "notes"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["hc-scaffold-framework"]
 edition = "2018"
 
