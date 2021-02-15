@@ -4,7 +4,8 @@ use serde_derive::{Deserialize, Serialize};
 use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    holochain_persistence_api::cas::content::Address
+    holochain_core_types::time::Iso8601,
+    holochain_persistence_api::cas::content::Address,
 };
 
 use crate::note::NoteEntry;
@@ -30,11 +31,6 @@ mod notes {
     }
 
     #[entry_def]
-    fn note_id_def() -> ValidatingEntryType {
-       note::id_definition()
-    }
-
-    #[entry_def]
      fn note_entry_def() -> ValidatingEntryType {
         note::entry_definition()
     }
@@ -45,18 +41,18 @@ mod notes {
     }
 
     #[zome_fn("hc_public")]
-    fn get_note(id: Address) -> ZomeApiResult<Note> {
-        note::handlers::get_note(id)
+    fn get_note(id: Address, created_at: Iso8601) -> ZomeApiResult<Note> {
+        note::handlers::get_note(id, created_at)
     }
 
     #[zome_fn("hc_public")]
-    fn update_note(id: Address, address: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
-        note::handlers::update_note(id, address, note_input)
+    fn update_note(id: Address, created_at: Iso8601, address: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
+        note::handlers::update_note(id, created_at, address, note_input)
     }
 
     #[zome_fn("hc_public")]
-    fn remove_note(id: Address, address: Address) -> ZomeApiResult<Address> {
-        note::handlers::remove_note(id, address)
+    fn remove_note(id: Address, created_at: Iso8601, address: Address) -> ZomeApiResult<Address> {
+        note::handlers::remove_note(id, created_at, address)
     }
 
     #[zome_fn("hc_public")]
